@@ -1,0 +1,54 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package JavaApplication1;
+
+import java.net.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ *
+ * @author Лёха
+ */
+public class InternetExplorer {
+
+    public static void main(String[] args) throws Exception {
+        for (String o : linker("http://www.panklive.narod.ru", 0)) {
+            System.out.println(o);
+        }
+    }
+
+    public static List<String> linker(String link, Integer i) throws Exception {
+        String text;
+        List<String> list = new ArrayList();
+        String reg = "href=\"{1}[^ ]+";
+        URL page = new URL(link);
+        InputStream fil = page.openStream();
+        byte[] str = new byte[fil.available()];
+        fil.read(str);
+        text = new String(str);
+        //System.out.println(text);
+        Pattern p = Pattern.compile(reg);
+        String[] split = text.split("\\s");
+        for (String split1 : split) {
+            Matcher m = p.matcher(split1);
+            if (m.matches() == true) {
+                String[] sup = split1.split("\"");
+                list.add(sup[1]);
+            }
+        }
+        if (i > 1) {
+            i = i - 1;
+            for (String o : list) {
+                linker(o, i);
+            }
+        }
+        return list;
+    }
+}
